@@ -1,4 +1,5 @@
 using favapp;
+using favapp.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -14,5 +15,7 @@ builder.Services.AddOidcAuthentication(options =>
     // For more information, see https://aka.ms/blazor-standalone-auth
     builder.Configuration.Bind("Local", options.ProviderOptions);
 });
+
+builder.Services.AddScoped<ITmdbService, TmdbService>();
 
 await builder.Build().RunAsync();
