@@ -1,6 +1,5 @@
 ﻿@page "/"
-
-
+@inject favapp.Services.ITmdbService TmdbService
 <PageTitle>Favapp</PageTitle>
 
 <h1>Bienvenue sur Favapp</h1>
@@ -9,4 +8,70 @@
     Before authentication will function correctly, you must configure your provider details in <code>Program.cs</code>
 </div>
 
-Welcome to your new app.
+<h3>Film du moment</h3>
+@if (Movies == null)
+{
+    <p>Chargement du contenu</p>
+}
+else{
+    <ul>
+    @foreach(var movie in Movies) // Analyser ce que je veux faire et decouper en probleme ATOMIQUE et regler tous ces petites taches pour realiser la grosse
+    {
+        <li><img src="https://image.tmdb.org/t/p/w200@(movie.PosterPath)" /></li>
+        <li>@movie.Title</li>
+        <li>@movie.Genre</li>
+        <li>@movie.ReleaseDate</li>
+        <li>@movie.VoteAverage</li>
+    }
+    </ul>
+}
+
+
+
+@code{
+
+    private List<Models.Movie>? Movies { set; get; } = null;
+
+    /*
+     * 1. La différence entre Task et Task<T>
+        Regarde bien la différence de signature entre ton Service et ta Page :
+
+            Dans ton Service (GetPopularMovieAsync) :
+            Tu as écrit Task<List<Movie>>.
+            Le <...> signifie : "Je promets de te ramener un paquet".
+            -> Donc tu es obligé de faire return maListe;.
+
+            Dans ta Page (OnInitializedAsync) :
+            Tu as écrit Task (tout court, sans chevrons <>).
+            Cela signifie : "Je promets juste de faire le boulot".
+            -> C'est l'équivalent asynchrone du void.
+           
+     */
+    // Task<UnTruc> : Tu DOIS faire return unTruc;
+        //Si on te pose une question (Task<Reponse>), tu dois écrire une réponse.
+    // Task : Tu NE FAIS PAS de return
+        //Si on te dit juste "Fais la vaisselle" (Task), tu ne réponds rien. Le simple fait d'avoir fini (d'arriver au bout de la tâche) suffit.
+    protected override async Task OnInitializedAsync()
+    {
+        Movies = await TmdbService.GetPopularMovieAsync();
+    }
+}
+
+<!--
+    wwwroot : dossier de contenu statique CSS, JS, images, librairies
+
+    models : classe C# pour representer les données que l'application utilise
+
+    Views : un dossier par controller
+
+
+
+    Layout : doit contenir tout les elements commun à l'application Header footer Nav ...
+
+
+    Middleware c'est un composant logiciel, dans lequel la requete http passe, permettant d'ajouter de la logique (rien compris)
+
+    _imports : permet de rajouter tous les using et donc ne pas avoir besoin de specifier tout le chemin quand on doit importer.
+
+
+-->

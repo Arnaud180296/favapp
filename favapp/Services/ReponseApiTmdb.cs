@@ -6,6 +6,6 @@ namespace favapp.Services
     public class ReponseApiTmdb
     {
         [JsonPropertyName("results")]
-        public List<Movie> ApiResultats { get; set; }
+        public List<Movie>? ApiResults { get; set; }
     }
 }

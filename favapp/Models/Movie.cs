@@ -8,7 +8,7 @@ namespace favapp.Models
         public int Id { get; set; }
 
         [JsonPropertyName ("genre_ids")] 
-        public string Genre { get; set; }
+        public List<int> Genre { get; set; }
 
         [JsonPropertyName("title")]
         public string Title { get; set; }
@@ -17,7 +17,7 @@ namespace favapp.Models
         public string ReleaseDate {  get; set; }
 
         [JsonPropertyName("vote_average")]
-        public int VoteAverage { get; set; }
+        public double VoteAverage { get; set; }
 
         [JsonPropertyName("poster_path")]
         public string PosterPath { get; set; }

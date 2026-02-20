@@ -16,12 +16,30 @@ public class TmdbService : ITmdbService
 
     public async Task<List<Movie>> GetPopularMovieAsync()
     {
-        string url = $"https://api.themoviedb.org/3/movie/popular?api_key={ApiConfig.API_KEY}&language=fr-FR";
+        try
+        {
+            /*$"https://api.themoviedb.org/3/movie/popular?api_key={ApiConfig.API_KEY}&language=fr-FR";*/
+            string url = $"https://api.themoviedb.org/3/movie/popular?language=fr-FR";
 
-        var reponse = await _httpClient.GetFromJsonAsync<ReponseApiTmdb>(url);
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
 
-        if (reponse != null)
-            return reponse.ApiResultats;
+            request.Headers.Add("Authorization", $"Bearer {ApiConfig.API_KEY}");
+
+            var reponse = await _httpClient.SendAsync(request);
+
+            if (reponse.IsSuccessStatusCode)
+            {
+                var reponseApi = await reponse.Content.ReadFromJsonAsync<ReponseApiTmdb>();
+
+                if (reponseApi != null)
+                    return reponseApi.ApiResults;
+            }
+        }
+        catch (Exception ex)
+        {
+            // C'EST CA QUI VA TE SAUVER LA VIE
+            Console.WriteLine($"ERREUR CRITIQUE : {ex.Message}");
+        }
 
         return new List<Movie>();
     }
