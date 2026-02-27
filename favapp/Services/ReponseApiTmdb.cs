@@ -7,5 +7,8 @@ namespace favapp.Services
     {
         [JsonPropertyName("results")]
         public List<Movie>? ApiResults { get; set; }
+
+        //[JsonPropertyName("person")]
+        // public Person ApiResults ...
     }
 }

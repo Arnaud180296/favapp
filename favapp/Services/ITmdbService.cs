@@ -9,5 +9,7 @@ namespace favapp.Services
         // en gros pendant que l'application recupere les donnees de l'api le reste de l'application ne fige pas 
         Task<List<Movie>> GetPopularMovieAsync();
 
+        Task<Movie> GetMovieDetailsAsync(int id);
+
     }
 }

@@ -1,5 +1,7 @@
 ﻿@page "/"
-@inject favapp.Services.ITmdbService TmdbService
+<!-- ajouter le chemin dans le _imports pour ne plus à avoir à spécifier tout le chemin-->
+@inject favapp.Services.ITmdbService TmdbService 
+
 <PageTitle>Favapp</PageTitle>
 
 <h1>Bienvenue sur Favapp</h1>
@@ -14,16 +16,23 @@
     <p>Chargement du contenu</p>
 }
 else{
-    <ul>
-    @foreach(var movie in Movies) // Analyser ce que je veux faire et decouper en probleme ATOMIQUE et regler tous ces petites taches pour realiser la grosse
-    {
-        <li><img src="https://image.tmdb.org/t/p/w200@(movie.PosterPath)" /></li>
-        <li>@movie.Title</li>
-        <li>@movie.Genre</li>
-        <li>@movie.ReleaseDate</li>
-        <li>@movie.VoteAverage</li>
-    }
-    </ul>
+    <div class="row">
+        @foreach (var movie in Movies) // Analyser ce que je veux faire et decouper en probleme ATOMIQUE et regler tous ces petites taches pour realiser la grosse
+        {
+            <div class="col-6 col-md-4 col-lg-3 mb-4">
+                <div class="card h-100">
+                    <img src="https://image.tmdb.org/t/p/w200@(movie.PosterPath)" class="card-img-top"  />
+                    <div class="card-body">
+                        <h5>@movie.Title</h5>
+                        <p>Genres : @movie.Genre</p>
+                        <p>Date de sortie : @movie.ReleaseDate</p>
+                        <p>Note des utilisateurs : @movie.VoteAverage</p>
+                        <a href="/movie/@movie.Id" class="btn btn-primary mt-auto">Voir les détails</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 }
 
 

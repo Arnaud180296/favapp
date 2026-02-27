@@ -1,0 +1,80 @@
+﻿@page "/movie/{Id:int}"
+@inject favapp.Services.ITmdbService TmdbService
+@inject favapp.Services.FavoriteService FavoriteService
+
+<PageTitle>Détails du film</PageTitle>
+
+@if (LeFilm == null)
+{
+    <p>Recherche des informations du film...</p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <img src="https://image.tmdb.org/t/p/w500@(LeFilm.PosterPath)" class="img-fluid rounded" />
+        </div>
+        <div class="col-md-8">
+            <h1>@LeFilm.Title</h1>
+            <p><strong>Note :</strong> @LeFilm.VoteAverage / 10</p>
+            <p><strong>Date de sortie :</strong> @LeFilm.ReleaseDate</p>
+        </div>
+        <div class="mt-4">
+            <AuthorizeView>
+                <Authorized>
+                    @if (estFavori)
+                    {
+                        <button class="btn btn-danger" @onclick="ToggleFavori">❤️ Retirer des favoris</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-danger" @onclick="ToggleFavori">🤍 Ajouter aux favoris</button>
+                    }
+                </Authorized>
+                <NotAuthorized>
+                    <div class="alert alert-secondary">
+                        <a href="/login">Connectez-vous</a> pour ajouter ce film à vos favoris.
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+    </div>
+}
+
+@code {
+    // Le paramètre qui vient de l'URL (/movie/123 -> Id = 123)
+    [Parameter]
+    public int Id { get; set; }
+
+    private Models.Movie? LeFilm { get; set; }
+
+    // Notre variable pour savoir si le cœur doit être plein ou vide
+    private bool estFavori = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // 1. On va chercher les infos du film à l'API
+        LeFilm = await TmdbService.GetMovieDetailsAsync(Id);
+
+        // 2. On demande au navigateur de charger les favoris depuis le LocalStorage
+        await FavoriteService.LoadFavoritesAsync();
+
+        // 3. On regarde si le film actuel est déjà dans le panier
+        estFavori = FavoriteService.IsFavorite(Id);
+    }
+
+    // La méthode déclenchée quand on clique sur le bouton
+    private async Task ToggleFavori()
+    {
+        if (estFavori)
+        {
+            await FavoriteService.RemoveFromFavoritesAsync(Id);
+            estFavori = false; // Le cœur devient vide
+        }
+        else
+        {
+            await FavoriteService.AddToFavoritesAsync(Id);
+            estFavori = true; // Le cœur devient plein
+        }
+    }
+}
