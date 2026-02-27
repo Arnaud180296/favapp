@@ -2,13 +2,16 @@
 <!-- ajouter le chemin dans le _imports pour ne plus à avoir à spécifier tout le chemin-->
 @inject favapp.Services.ITmdbService TmdbService 
 
+
+@* <summary>
+    Composant principal (Page d'accueil) de l'application.
+    Affiche une grille responsive des films actuellement populaires en interrogeant l'API TMDB.
+    </summary>
+*@
 <PageTitle>Favapp</PageTitle>
 
 <h1>Bienvenue sur Favapp</h1>
 
-<div class="alert alert-warning" role="alert">
-    Before authentication will function correctly, you must configure your provider details in <code>Program.cs</code>
-</div>
 
 <h3>Film du moment</h3>
 @if (Movies == null)
@@ -24,7 +27,7 @@ else{
                     <img src="https://image.tmdb.org/t/p/w200@(movie.PosterPath)" class="card-img-top"  />
                     <div class="card-body">
                         <h5>@movie.Title</h5>
-                        <p>Genres : @movie.Genre</p>
+                        <p>Genres : @string.Join(", ", movie.Genre)</p>
                         <p>Date de sortie : @movie.ReleaseDate</p>
                         <p>Note des utilisateurs : @movie.VoteAverage</p>
                         <a href="/movie/@movie.Id" class="btn btn-primary mt-auto">Voir les détails</a>
@@ -38,7 +41,10 @@ else{
 
 
 @code{
-
+    /// <summary>
+    /// Liste des films populaires récupérés depuis l'API.
+    /// Vaut 'null' tant que la requête HTTP n'est pas terminée.
+    /// </summary>
     private List<Models.Movie>? Movies { set; get; } = null;
 
     /*
@@ -60,6 +66,11 @@ else{
         //Si on te pose une question (Task<Reponse>), tu dois écrire une réponse.
     // Task : Tu NE FAIS PAS de return
         //Si on te dit juste "Fais la vaisselle" (Task), tu ne réponds rien. Le simple fait d'avoir fini (d'arriver au bout de la tâche) suffit.
+
+    /// <summary>
+    /// Méthode du cycle de vie Blazor déclenchée à l'initialisation du composant.
+    /// Fait appel au service TMDB pour remplir la liste des films.
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         Movies = await TmdbService.GetPopularMovieAsync();

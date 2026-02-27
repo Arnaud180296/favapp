@@ -2,6 +2,14 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
 
+@* <summary>
+    Composant d'interface utilisateur gérant l'affichage dynamique de l'état de session.
+    Affiche le nom de l'utilisateur et un bouton de déconnexion s'il est authentifié.
+    Affiche un bouton de connexion s'il s'agit d'un visiteur anonyme.
+    Généralement placé dans la barre de navigation principale (MainLayout).
+    </summary>
+*@
+
 <AuthorizeView>
     <Authorized>
         <span class="me-2">Hello, @context.User.Identity?.Name!</span>
@@ -13,12 +21,17 @@
 </AuthorizeView>
 
 @code {
-    // Ajout du async Task
+    /// <summary>
+    /// Déclenche le processus de déconnexion de l'utilisateur.
+    /// Fait appel au CustomAuthStateProvider pour vider le LocalStorage et réinitialiser l'état en mémoire,
+    /// puis redirige instantanément l'utilisateur vers la page d'accueil de l'application.
+    /// </summary>
+    /// <returns>Une tâche asynchrone représentant l'opération de déconnexion.</returns>
     public async Task BeginLogOut()
     {
         var customProvider = (CustomAuthStateProvider)AuthStateProvider;
 
-        // Ajout du await
+        
         await customProvider.SeDeconnecter();
 
         Navigation.NavigateTo("/");

@@ -2,6 +2,12 @@
 @inject favapp.Services.ITmdbService TmdbService
 @inject favapp.Services.FavoriteService FavoriteService
 
+@* <summary>
+    Composant affichant les détails d'un film spécifique en fonction de son identifiant.
+    Permet également aux utilisateurs authentifiés d'ajouter ou de retirer ce film 
+    de leur liste personnelle de favoris.
+    </summary>
+*@
 <PageTitle>Détails du film</PageTitle>
 
 @if (LeFilm == null)
@@ -42,15 +48,30 @@ else
 }
 
 @code {
-    // Le paramètre qui vient de l'URL (/movie/123 -> Id = 123)
+    
+    /// <summary>
+    /// Paramètre de route contenant l'identifiant unique du film (passé dans l'URL).
+    /// </summary>
     [Parameter]
     public int Id { get; set; }
 
+    /// <summary>
+    /// L'objet film contenant les informations renvoyées par l'API TMDB.
+    /// Vaut 'null' pendant le chargement initial.
+    /// </summary>
     private Models.Movie? LeFilm { get; set; }
 
-    // Notre variable pour savoir si le cœur doit être plein ou vide
+    /// <summary>
+    /// Indique si le film actuellement affiché fait partie des favoris de l'utilisateur connecté.
+    /// Détermine le style (plein ou vide) et l'action du bouton de favoris.
+    /// </summary>
     private bool estFavori = false;
 
+    /// <summary>
+    /// S'exécute à l'ouverture de la page.
+    /// Récupère les détails du film via l'API, charge la liste des favoris de l'utilisateur
+    /// depuis le LocalStorage, et vérifie si le film actuel y figure pour mettre à jour l'interface.
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         // 1. On va chercher les infos du film à l'API
@@ -63,7 +84,11 @@ else
         estFavori = FavoriteService.IsFavorite(Id);
     }
 
-    // La méthode déclenchée quand on clique sur le bouton
+    /// <summary>
+    /// Méthode déclenchée par le clic sur le bouton "Ajouter/Retirer des favoris".
+    /// Met à jour l'état dans le service (qui sauvegarde automatiquement dans le LocalStorage)
+    /// et actualise la variable locale pour changer le style du bouton instantanément.
+    /// </summary>
     private async Task ToggleFavori()
     {
         if (estFavori)

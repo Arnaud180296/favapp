@@ -3,6 +3,14 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavManager
 
+@* <summary>
+    Page de connexion permettant à un utilisateur de s'authentifier dans l'application.
+    Étant donné l'architecture sans backend (Serverless), cette page simule une connexion 
+    en enregistrant le nom d'utilisateur dans le LocalStorage via le CustomAuthStateProvider.
+    </summary>
+*@
+
+
 <PageTitle>Connexion</PageTitle>
 
 <div class="row justify-content-center mt-5">
@@ -23,9 +31,20 @@
 </div>
 
 @code {
+    
+    /// <summary>
+    /// Propriété liée au champ de saisie (input) du formulaire de connexion.
+    /// Contient le nom d'utilisateur saisi par l'internaute.
+    /// </summary>
     private string Username { get; set; } = "";
 
-    // Ajout du async Task
+    /// <summary>
+    /// Déclenche le processus de connexion lors du clic sur le bouton "Valider".
+    /// Vérifie que le nom d'utilisateur n'est pas vide ou composé d'espaces,
+    /// appelle le service d'authentification personnalisé pour créer la session en mémoire et dans le navigateur,
+    /// puis redirige l'utilisateur vers la page d'accueil.
+    /// </summary>
+    /// <returns>Une tâche asynchrone représentant l'opération de connexion.</returns>
     private async Task Connexion()
     {
         if (!string.IsNullOrWhiteSpace(Username))
