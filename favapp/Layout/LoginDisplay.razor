@@ -1,19 +1,26 @@
-﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+﻿@using favapp.Services
+@inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
 
 <AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity?.Name!
-        <button class="nav-link btn btn-link" @onclick="BeginLogOut">Log out</button>
+        <span class="me-2">Hello, @context.User.Identity?.Name!</span>
+        <button class="nav-link btn btn-link d-inline" @onclick="BeginLogOut">Log out</button>
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/login">Log in</a>
+        <a href="/login" class="btn btn-primary">Log in</a>
     </NotAuthorized>
 </AuthorizeView>
 
-@code{
-    public void BeginLogOut()
+@code {
+    // Ajout du async Task
+    public async Task BeginLogOut()
     {
-        Navigation.NavigateToLogout("authentication/logout");
+        var customProvider = (CustomAuthStateProvider)AuthStateProvider;
+
+        // Ajout du await
+        await customProvider.SeDeconnecter();
+
+        Navigation.NavigateTo("/");
     }
 }

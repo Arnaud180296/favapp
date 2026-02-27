@@ -1,0 +1,41 @@
+﻿@page "/login"
+@using favapp.Services
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavManager
+
+<PageTitle>Connexion</PageTitle>
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="text-center mb-4">Se connecter</h3>
+
+                <div class="mb-3">
+                    <label>Nom d'utilisateur</label>
+                    <input @bind="Username" class="form-control" placeholder="Entrez votre nom..." />
+                </div>
+
+                <button class="btn btn-primary w-100" @onclick="Connexion">Valider</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string Username { get; set; } = "";
+
+    // Ajout du async Task
+    private async Task Connexion()
+    {
+        if (!string.IsNullOrWhiteSpace(Username))
+        {
+            var customProvider = (CustomAuthStateProvider)AuthStateProvider;
+
+            // Ajout du await
+            await customProvider.SeConnecter(Username);
+
+            NavManager.NavigateTo("/");
+        }
+    }
+}
