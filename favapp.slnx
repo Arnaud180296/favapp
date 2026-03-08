@@ -1,4 +1,6 @@
 <Solution>
   <Project Path="favapp/favapp.csproj" />
-  <Project Path="TestFavApp/TestFavApp.csproj" Id="6accc72a-083e-4651-9cc1-bbbf5b193f51" />
+  <Project Path="TestFavApp/TestFavApp.csproj" Id="6accc72a-083e-4651-9cc1-bbbf5b193f51">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
 </Solution>
