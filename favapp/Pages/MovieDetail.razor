@@ -36,6 +36,31 @@ else
                     {
                         <button class="btn btn-outline-danger" @onclick="ToggleFavori">🤍 Ajouter aux favoris</button>
                     }
+
+
+                    @if (estFavori)
+                    {
+                        <div class="card p-3 mt-3 bg-light">
+                            <label class="form-label fw-bold">📝 Mon avis personnel :</label>
+
+                            @* Le @bind lie automatiquement la zone de texte à la variable C# *@
+                            <textarea class="form-control mb-2" rows="3"
+                                      placeholder="Ce film est génial car..."
+                                      @bind="_personalNote"
+                                      @bind:event="oninput"></textarea>
+
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-success" @onclick="SaveNoteAsync">
+                                    💾 Sauvegarder la note
+                                </button>
+
+                                @if (_showSavedMessage)
+                                {
+                                    <span class="text-success ms-3 fw-bold">✔ Note enregistrée !</span>
+                                }
+                            </div>
+                        </div>
+                    }
                 </Authorized>
                 <NotAuthorized>
                     <div class="alert alert-secondary">
@@ -67,6 +92,10 @@ else
     /// </summary>
     private bool estFavori = false;
 
+
+    private string _personalNote = "";
+    private bool _showSavedMessage = false;
+
     /// <summary>
     /// S'exécute à l'ouverture de la page.
     /// Récupère les détails du film via l'API, charge la liste des favoris de l'utilisateur
@@ -82,6 +111,10 @@ else
 
         // 3. On regarde si le film actuel est déjà dans le panier
         estFavori = FavoriteService.IsFavorite(Id);
+        if (estFavori)
+        {
+            _personalNote = FavoriteService.GetNote(Id);
+        }
     }
 
     /// <summary>
@@ -101,5 +134,27 @@ else
             await FavoriteService.AddToFavoritesAsync(Id);
             estFavori = true; // Le cœur devient plein
         }
+    }
+
+    /// <summary>
+    /// Sauvegarde la note personnelle de l'utilisateur pour ce film dans le LocalStorage via le service.
+    /// Déclenche également l'affichage temporaire (3 secondes) d'un message visuel de confirmation
+    /// pour assurer à l'utilisateur que l'action a bien été prise en compte.
+    /// </summary>
+    private async Task SaveNoteAsync()
+    {
+        // Enregistrement de la note en mémoire
+        await FavoriteService.UpdateNoteAsync(Id, _personalNote);
+
+        // Affichage du message de succès ("Note enregistrée !")
+        _showSavedMessage = true;
+        
+        StateHasChanged();
+
+        // On met la méthode en pause pendant 3 secondes sans bloquer l'application
+        await Task.Delay(3000);
+
+        // On cache le message
+        _showSavedMessage = false;
     }
 }

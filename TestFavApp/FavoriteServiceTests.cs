@@ -68,7 +68,7 @@ namespace TestFavApp
             // Le juge vérifie : "Est-ce que le film 123 est bien vu comme un favori ?"
             Assert.True(service.IsFavorite(testMovieId));
             // Le juge vérifie : "Est-ce qu'il y a bien UN SEUL film dans le panier de l'utilisateur ?"
-            Assert.Single(service.GetFavoriteIds());
+            Assert.Single(service.GetFavorites());
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace TestFavApp
 
             
             // Même si on a cliqué deux fois, le juge vérifie que la sécurité anti-doublon a fonctionné : il ne doit y avoir qu'UN film.
-            Assert.Single(service.GetFavoriteIds());
+            Assert.Single(service.GetFavorites());
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace TestFavApp
             // Le juge vérifie : "Le film 789 ne doit plus être un favori".
             Assert.False(service.IsFavorite(testMovieId));
             // Le panier doit être totalement vide.
-            Assert.Empty(service.GetFavoriteIds());
+            Assert.Empty(service.GetFavorites());
         }
     }
 }
